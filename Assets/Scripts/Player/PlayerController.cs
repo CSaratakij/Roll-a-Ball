@@ -2,6 +2,7 @@
 
 namespace RollingBall
 {
+    [RequireComponent(typeof(PlayerResetter))]
     public class PlayerController : MonoBehaviour
     {
         [SerializeField]
@@ -17,12 +18,10 @@ namespace RollingBall
         LayerMask itemMask;
 
 
-        public int Score {  get { return score; } }
         public bool IsControlable {  get { return IsControlable; } }
 
 
         int itemCount;
-        int score;
 
 
         Collider[] hits;
@@ -57,33 +56,46 @@ namespace RollingBall
 
         void _Subscribe_Event()
         {
-
+            GameController.OnGameStart += _OnGameStart;
+            GameController.OnGameOver += _OnGameOver;
         }
 
         void _Unsubscribe_Event()
         {
+            GameController.OnGameStart -= _OnGameStart;
+            GameController.OnGameOver -= _OnGameOver;
+        }
 
+        void _OnGameStart()
+        {
+            isControlable = true;
+        }
+
+        void _OnGameOver()
+        {
+            isControlable = false;
         }
 
         void _InputHandler()
         {
-            if (!isControlable) { return; }
+            if (!isControlable) {
+                inputVector = Vector3.zero;
+                return;
+            }
 
             inputVector.x = Input.GetAxisRaw("Horizontal");
             inputVector.z = Input.GetAxisRaw("Vertical");
 
-            if (inputVector.magnitude > 1)
-            {
+            if (inputVector.magnitude > 1) {
                 inputVector = inputVector.normalized;
             }
         }
 
         void _DetectCube_Handler()
         {
-            if (_IsDetectCube())
-            {
+            if (_IsDetectCube()) {
                 if (!hits[0].gameObject.activeSelf) { return; }
-                score += 100;
+                Global.Score += 100;
                 hits[0].gameObject.SetActive(false);
             }
         }
