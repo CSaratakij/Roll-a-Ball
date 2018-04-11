@@ -44,7 +44,7 @@ namespace RollingBall
         {
             transform.position = origin;
             rigid.velocity = Vector3.zero;
-            Global.Score = 0;
+            Global.Reset();
         }
     }
 }

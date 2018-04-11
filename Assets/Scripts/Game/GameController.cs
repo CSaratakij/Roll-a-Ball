@@ -9,6 +9,9 @@
         public static event Func OnGameRestart;
 
 
+        public static bool IsGameStart { get { return isGameStart; } }
+
+
         static bool isGameStart;
 
 

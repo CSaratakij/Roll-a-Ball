@@ -99,7 +99,8 @@ namespace RollingBall
         {
             if (!_IsDetectCube()) { return; }
             if (!hits[0].gameObject.activeSelf) { return; }
-            Global.Score += 100;
+
+            Global.AddScore(100);
             hits[0].gameObject.SetActive(false);
         }
 
