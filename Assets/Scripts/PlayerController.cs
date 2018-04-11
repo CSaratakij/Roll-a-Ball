@@ -38,7 +38,7 @@ namespace RollingBall
             _Subscribe_Event();
         }
 
-        void OnDisable()
+        void OnDestroy()
         {
             _Unsubscribe_Event();
         }
