@@ -18,7 +18,7 @@ namespace RollingBall
         LayerMask itemMask;
 
 
-        public bool IsControlable {  get { return IsControlable; } }
+        public bool IsControlable {  get { return isControlable; } }
 
 
         int itemCount;
@@ -31,9 +31,7 @@ namespace RollingBall
 
         void Awake()
         {
-            hits = new Collider[1];
-            rigid = GetComponent<Rigidbody>();
-
+            _Initialize();
             _Subscribe_Event();
         }
 
@@ -52,6 +50,12 @@ namespace RollingBall
         {
             rigid.AddForce((inputVector * moveForce) * Time.deltaTime, ForceMode.Force);
             itemCount = Physics.OverlapSphereNonAlloc(rigid.position, radius, hits, itemMask);
+        }
+
+        void _Initialize()
+        {
+            hits = new Collider[1];
+            rigid = GetComponent<Rigidbody>();
         }
 
         void _Subscribe_Event()
@@ -93,11 +97,10 @@ namespace RollingBall
 
         void _DetectCube_Handler()
         {
-            if (_IsDetectCube()) {
-                if (!hits[0].gameObject.activeSelf) { return; }
-                Global.Score += 100;
-                hits[0].gameObject.SetActive(false);
-            }
+            if (!_IsDetectCube()) { return; }
+            if (!hits[0].gameObject.activeSelf) { return; }
+            Global.Score += 100;
+            hits[0].gameObject.SetActive(false);
         }
 
         bool _IsDetectCube()
