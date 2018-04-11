@@ -5,6 +5,9 @@ namespace RollingBall
     public class PlayerController : MonoBehaviour
     {
         [SerializeField]
+        bool isControlable;
+
+        [SerializeField]
         float moveForce;
 
         [SerializeField]
@@ -15,21 +18,29 @@ namespace RollingBall
 
 
         public int Score {  get { return score; } }
+        public bool IsControlable {  get { return IsControlable; } }
 
 
         int itemCount;
         int score;
 
 
-        Collider[] hit;
+        Collider[] hits;
         Rigidbody rigid;
         Vector3 inputVector;
 
 
         void Awake()
         {
-            hit = new Collider[1];
+            hits = new Collider[1];
             rigid = GetComponent<Rigidbody>();
+
+            _Subscribe_Event();
+        }
+
+        void OnDisable()
+        {
+            _Unsubscribe_Event();
         }
 
         void Update()
@@ -41,11 +52,23 @@ namespace RollingBall
         void FixedUpdate()
         {
             rigid.AddForce((inputVector * moveForce) * Time.deltaTime, ForceMode.Force);
-            itemCount = Physics.OverlapSphereNonAlloc(transform.position, radius, hit);
+            itemCount = Physics.OverlapSphereNonAlloc(rigid.position, radius, hits, itemMask);
+        }
+
+        void _Subscribe_Event()
+        {
+
+        }
+
+        void _Unsubscribe_Event()
+        {
+
         }
 
         void _InputHandler()
         {
+            if (!isControlable) { return; }
+
             inputVector.x = Input.GetAxisRaw("Horizontal");
             inputVector.z = Input.GetAxisRaw("Vertical");
 
@@ -59,15 +82,16 @@ namespace RollingBall
         {
             if (_IsDetectCube())
             {
+                if (!hits[0].gameObject.activeSelf) { return; }
                 score += 100;
-                hit[0].gameObject.SetActive(false);
+                hits[0].gameObject.SetActive(false);
             }
         }
 
         bool _IsDetectCube()
         {
             if (itemCount <= 0) { return false; }
-            return (hit[0].transform.tag == "Cube");
+            return (hits[0].transform.tag == "Cube");
         }
     }
 }
